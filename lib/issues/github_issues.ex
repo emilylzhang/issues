@@ -1,15 +1,15 @@
 defmodule Issues.GithubIssues do
   @user_agent [{"User-agent", "Elixir emily@lob.com"}]
 
+  #  use a module attribute to fetch the value at compile time
+  @github_url Application.get_env(:issues, :github_url)
+
   def fetch(user, project) do
     user
     |> issues_url(project)
     |> HTTPoison.get(@user_agent)
     |> handle_response
   end
-
-  #  use a module attribute to fetch the value at compile time
-  @github_url Application.get_env(:issues, :github_url)
   
   def issues_url(user, project) do
     "#{@github_url}/repos/#{user}/#{project}/issues"
@@ -22,4 +22,5 @@ defmodule Issues.GithubIssues do
   def handle_response({_, %{status_code: _, body: body}}) do
     {:error, Poison.Parser.parse!(body)}
   end
+  
 end

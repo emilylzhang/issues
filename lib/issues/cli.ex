@@ -1,13 +1,15 @@
 defmodule Issues.CLI do
-
   @moduledoc """
   Handle the command line parsing and the dispatch to the various
   functions that end up generating a table of the last _n_ issues
   in a github project
   """
+
+  alias Issues.TableFormatter
+
   @default_count 4
 
-  def run(argv) do
+  def main(argv) do
     argv
     |> parse_args
     |> process
@@ -46,6 +48,7 @@ defmodule Issues.CLI do
     |> decode_response
     |> sort_into_ascending_order
     |> Enum.take(count)
+    |> TableFormatter.print_table_for_columns(["number", "created_at", "title"])
   end
 
   def sort_into_ascending_order(list_of_issues) do
